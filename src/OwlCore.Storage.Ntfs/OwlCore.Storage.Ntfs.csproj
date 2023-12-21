@@ -3,6 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 	<LangVersion>12</LangVersion>
+	  
+	<AssemblyName>OwlCore.Storage.Ntfs</AssemblyName>
+	<RootNamespace>OwlCore.Storage.Ntfs</RootNamespace>
+	<PackageId>OwlCore.Storage.Ntfs</PackageId>
+	<Version>0.9.2</Version>
+	<Authors>itsWindows11</Authors>
+	<Company>itsWindows11</Company>
+	<Description>A OwlCore.Storage based library to enumerate NTFS drives.</Description>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<PackageReleaseNotes>Initial release.</PackageReleaseNotes>
+	<RepositoryUrl>https://github.com/itsWindows11/OwlCore.Storage.Ntfs</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
