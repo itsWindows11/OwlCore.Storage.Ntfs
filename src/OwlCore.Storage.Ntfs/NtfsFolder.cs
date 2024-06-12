@@ -17,13 +17,13 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     /// <summary>
     /// The folder path.
     /// </summary>
-    public string Path => path;
+    public string Path { get; } = path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar);
 
     /// <inheritdoc/>
-    public string Id => path;
+    public string Id => Path;
 
     /// <inheritdoc/>
-    public string Name { get; } = global::System.IO.Path.GetFileName(path);
+    public string Name { get; } = global::System.IO.Path.GetFileName(path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar));
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
