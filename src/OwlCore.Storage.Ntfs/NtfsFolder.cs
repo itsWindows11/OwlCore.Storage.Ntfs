@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OwlCore.Storage.Ntfs;
 
-public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IFastGetRoot, IFastGetItem, IFastGetItemRecursive, IFastGetFirstByName
+public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot, IGetItem, IGetItemRecursive, IGetFirstByName
 {
     /// <summary>
     /// The <see cref="NtfsReader"/> that this folder belongs to.
@@ -23,7 +23,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IFastGet
     public string Id => path;
 
     /// <inheritdoc/>
-    public string Name { get; } = System.IO.Path.GetDirectoryName(path);
+    public string Name { get; } = global::System.IO.Path.GetFileName(path);
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
@@ -75,7 +75,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IFastGet
     }
 
     /// <inheritdoc/>
-    public Task<IFolder> GetRootAsync()
+    public Task<IFolder> GetRootAsync(CancellationToken cancellationToken = default)
     {
         DirectoryInfo root = new DirectoryInfo(Id).Root;
         return Task.FromResult<IFolder>(new NtfsFolder(reader, root.FullName));
