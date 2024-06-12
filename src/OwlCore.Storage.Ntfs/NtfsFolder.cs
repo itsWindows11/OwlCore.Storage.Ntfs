@@ -76,8 +76,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     /// <inheritdoc/>
     public Task<IFolder> GetParentAsync(CancellationToken cancellationToken = default)
     {
-        DirectoryInfo parent = Directory.GetParent(Path);
-        return Task.FromResult<IFolder>(parent is { } ? new NtfsFolder(reader, parent.FullName) : null);
+        return Task.FromResult<IFolder>(new NtfsFolder(reader, global::System.IO.Path.GetDirectoryName(Path)));
     }
 
     /// <inheritdoc/>
