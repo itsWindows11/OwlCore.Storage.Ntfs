@@ -22,5 +22,5 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Publish to NuGet
-      run: dotnet nuget push "/home/runner/work/OwlCore.Storage.Ntfs/OwlCore.Storage.Ntfs/bin/Release/OwlCore.Storage.*.*.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "/home/runner/work/OwlCore.Storage.Ntfs/OwlCore.Storage.Ntfs/src/OwlCore.Storage.Ntfs/bin/Release/OwlCore.Storage.*.*.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
       
