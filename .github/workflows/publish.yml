@@ -21,6 +21,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: test
+      run: cd /home/runner/work/OwlCore.Storage.Ntfs && ls
     - name: Publish to NuGet
       run: dotnet nuget push "/home/runner/work/OwlCore.Storage.Ntfs/src/OwlCore.Storage.Ntfs/bin/Release/OwlCore.Storage.*.*.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
       
