@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OwlCore.Storage.Ntfs;
 
-public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IFastGetRoot
+public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 {
     /// <summary>
     /// The <see cref="NtfsReader"/> that this file belongs to.
@@ -33,14 +33,10 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IFastGetRoot
 
     /// <inheritdoc/>
     public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-    {
-        // TODO: instead of creating a new DirectoryInfo, we could do string manipulation in the path.
-        DirectoryInfo parent = Directory.GetParent(Id);
-        return Task.FromResult<IFolder?>(parent is { } ? new NtfsFolder(reader, parent.FullName) : null);
-    }
+        => Task.FromResult<IFolder?>(new NtfsFolder(reader, global::System.IO.Path.GetDirectoryName(Id)));
 
     /// <inheritdoc/>
-    public Task<IFolder?> GetRootAsync()
+    public Task<IFolder?> GetRootAsync(CancellationToken cancellationToken = default)
     {
         DirectoryInfo root = new DirectoryInfo(Id).Root;
         return Task.FromResult<IFolder?>(new NtfsFolder(reader, root.FullName));
