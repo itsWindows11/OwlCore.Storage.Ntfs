@@ -12,6 +12,7 @@
 	<Company>itsWindows11</Company>
 	<Description>A OwlCore.Storage based library to enumerate NTFS drives.</Description>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<IncludeSymbols>true</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<PackageReleaseNotes>Initial release.</PackageReleaseNotes>
