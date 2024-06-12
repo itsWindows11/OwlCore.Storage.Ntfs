@@ -30,14 +30,18 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         => GetItemRecursiveAsync(name, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
-        => GetItemRecursiveAsync(id, cancellationToken);
+    public Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
+        => GetItemAsync(id, cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<IStorableChild> GetItemRecursiveAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<IStorableChild> GetItemAsync(string id, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         await foreach (var item in GetItemsAsync(cancellationToken: cancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (item.Id == id)
                 return item;
         }
@@ -60,7 +64,9 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (file.Attributes.HasFlag(Attributes.Directory) && (type.HasFlag(StorableType.Folder) || type.HasFlag(StorableType.All)))
+            if (file.Attributes.HasFlag(Attributes.Directory) &&
+                (type.HasFlag(StorableType.Folder) || type.HasFlag(StorableType.All))
+            )
                 yield return new NtfsFolder(reader, file.FullName);
 
             yield return new NtfsFile(reader, file);
