@@ -7,7 +7,7 @@
 	<AssemblyName>OwlCore.Storage.Ntfs</AssemblyName>
 	<RootNamespace>OwlCore.Storage.Ntfs</RootNamespace>
 	<PackageId>OwlCore.Storage.Ntfs</PackageId>
-	<Version>0.9.2</Version>
+	<Version>0.11.1</Version>
 	<Authors>itsWindows11</Authors>
 	<Company>itsWindows11</Company>
 	<Description>A OwlCore.Storage based library to enumerate NTFS drives.</Description>
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="itsWindows11.NtfsReader" Version="0.0.3" />
-    <PackageReference Include="OwlCore.Storage" Version="0.9.2" />
+    <PackageReference Include="OwlCore.Storage" Version="0.11.1" />
   </ItemGroup>
 
 </Project>
