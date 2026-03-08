@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OwlCore.Storage.Ntfs", "src\OwlCore.Storage.Ntfs\OwlCore.Storage.Ntfs.csproj", "{266425EB-8F9A-4F52-BA9F-604BB103EE57}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OwlCore.Storage.Ntfs.Tests", "src\OwlCore.Storage.Ntfs.Tests\OwlCore.Storage.Ntfs.Tests.csproj", "{4835DEE9-3068-468D-927B-DE9251298A18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OwlCore.Storage.Ntfs.Tests", "tests\OwlCore.Storage.Ntfs.Tests.csproj", "{11D4424C-531D-4CEC-993C-54684452C8D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{266425EB-8F9A-4F52-BA9F-604BB103EE57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{266425EB-8F9A-4F52-BA9F-604BB103EE57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{266425EB-8F9A-4F52-BA9F-604BB103EE57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4835DEE9-3068-468D-927B-DE9251298A18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4835DEE9-3068-468D-927B-DE9251298A18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4835DEE9-3068-468D-927B-DE9251298A18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4835DEE9-3068-468D-927B-DE9251298A18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D4424C-531D-4CEC-993C-54684452C8D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D4424C-531D-4CEC-993C-54684452C8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D4424C-531D-4CEC-993C-54684452C8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D4424C-531D-4CEC-993C-54684452C8D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
