@@ -6,7 +6,19 @@ namespace OwlCore.Storage.Ntfs.Tests;
 [TestClass]
 public class NtfsFolderTests : CommonIFolderTests
 {
-    private NtfsReader? reader;
+    private static NtfsReader? reader;
+
+    [ClassInitialize]
+    public static void ClassInitialize(TestContext context)
+    {
+        reader = new NtfsReader(new DriveInfo("C:\\"), RetrieveMode.Minimal);
+    }
+
+    [ClassCleanup]
+    public static void ClassCleanup()
+    {
+        reader?.Dispose();
+    }
 
     public override Task<IFolder> CreateFolderAsync()
     {
