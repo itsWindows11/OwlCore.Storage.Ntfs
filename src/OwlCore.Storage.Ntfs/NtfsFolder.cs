@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Filesystem.Ntfs;
 using System.Runtime.CompilerServices;
@@ -68,10 +69,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         cancellationToken.ThrowIfCancellationRequested();
 
         if (type == StorableType.None)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            yield break;
-        }
+            throw new ArgumentOutOfRangeException(nameof(type));
 
         cancellationToken.ThrowIfCancellationRequested();
 
