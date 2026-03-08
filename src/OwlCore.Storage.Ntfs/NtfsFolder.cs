@@ -55,8 +55,13 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (type == StorableType.None)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
             yield break;
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
