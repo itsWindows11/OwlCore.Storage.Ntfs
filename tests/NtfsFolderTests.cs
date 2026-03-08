@@ -55,6 +55,10 @@ public class NtfsFolderTests : CommonIFolderTests
 
         await Task.WhenAll(tasks);
 
+        // Must update the reader to reflect the new items.
+        reader?.Dispose();
+        reader = new NtfsReader(new DriveInfo("C:\\"), RetrieveMode.Minimal);
+
         return folder;
     }
 }
