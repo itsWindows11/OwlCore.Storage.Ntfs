@@ -18,6 +18,7 @@
 	</PackageReference>
     <PackageReference Include="OwlCore.Storage" Version="0.11.1" />
     <PackageReference Include="OwlCore.Storage.CommonTests" Version="0.5.1" />
+    <PackageReference Include="Ulid" Version="1.4.1" />
   </ItemGroup>
 
   <ItemGroup>

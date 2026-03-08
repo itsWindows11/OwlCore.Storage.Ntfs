@@ -17,13 +17,23 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     /// <summary>
     /// The folder path.
     /// </summary>
-    public string Path { get; } = path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar);
+    public string Path { get; } = path.TrimEnd(
+        global::System.IO.Path.PathSeparator,
+        global::System.IO.Path.DirectorySeparatorChar,
+        global::System.IO.Path.AltDirectorySeparatorChar
+    );
 
     /// <inheritdoc/>
     public string Id => Path;
 
     /// <inheritdoc/>
-    public string Name { get; } = global::System.IO.Path.GetFileName(path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar));
+    public string Name { get; } = global::System.IO.Path.GetFileName(
+        path.TrimEnd(
+            global::System.IO.Path.PathSeparator,
+            global::System.IO.Path.DirectorySeparatorChar,
+            global::System.IO.Path.AltDirectorySeparatorChar
+        )
+    );
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
@@ -72,8 +82,12 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
             if (file.Attributes.HasFlag(Attributes.Directory) &&
                 (type.HasFlag(StorableType.Folder) || type.HasFlag(StorableType.All))
             )
+            {
+                cancellationToken.ThrowIfCancellationRequested();
                 yield return new NtfsFolder(reader, file.FullName);
+            }
 
+            cancellationToken.ThrowIfCancellationRequested();
             yield return new NtfsFile(reader, file);
         }
     }
