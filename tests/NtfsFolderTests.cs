@@ -61,4 +61,10 @@ public class NtfsFolderTests : CommonIFolderTests
 
         return folder;
     }
+
+    public override Task<IFolder?> CreateFolderWithCreatedAtAsync(DateTime createdAt) => Task.FromResult<IFolder?>(null);
+
+    public override Task<IFolder?> CreateFolderWithLastModifiedAtAsync(DateTime lastModifiedAt) => Task.FromResult<IFolder?>(null);
+
+    public override Task<IFolder?> CreateFolderWithLastAccessedAtAsync(DateTime lastAccessedAt) => Task.FromResult<IFolder?>(null);
 }
