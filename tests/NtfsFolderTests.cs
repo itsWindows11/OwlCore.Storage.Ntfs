@@ -50,10 +50,8 @@ public class NtfsFolderTests : CommonIFolderTests
         for (int i = 0; i < fileCount; i++)
         {
             var filePath = Path.Combine(folder.Id, $"file{i}.txt");
-            tasks.Add(File.WriteAllTextAsync(filePath, "Test content"));
+            await File.WriteAllTextAsync(filePath, "Test content");
         }
-
-        await Task.WhenAll(tasks);
 
         // Must update the reader to reflect the new items.
         reader?.Dispose();

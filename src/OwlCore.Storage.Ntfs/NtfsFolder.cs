@@ -73,7 +73,8 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        foreach (var file in await Task.Run(() => Reader.GetNodes(path), cancellationToken))
+        var nodes = await Task.Run(() => Reader.GetNodes(path), cancellationToken).ConfigureAwait(false);
+        foreach (var file in nodes)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
