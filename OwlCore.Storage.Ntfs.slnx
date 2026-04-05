@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src//OwlCore.Storage.Ntfs.csproj" />
+  <Project Path="tests/OwlCore.Storage.Ntfs.Tests.csproj" />
+</Solution>

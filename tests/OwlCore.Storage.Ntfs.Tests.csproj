@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\OwlCore.Storage.Ntfs\OwlCore.Storage.Ntfs.csproj" />
+    <ProjectReference Include="..\src\OwlCore.Storage.Ntfs.csproj" />
   </ItemGroup>
 
 </Project>
