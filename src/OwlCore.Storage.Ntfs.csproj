@@ -7,15 +7,19 @@
 	<AssemblyName>OwlCore.Storage.Ntfs</AssemblyName>
 	<RootNamespace>OwlCore.Storage.Ntfs</RootNamespace>
 	<PackageId>OwlCore.Storage.Ntfs</PackageId>
-	<Version>0.12.1</Version>
+	<Version>0.12.2</Version>
 	<Authors>itsWindows11</Authors>
 	<Company>itsWindows11</Company>
 	<Description>An OwlCore.Storage based library to enumerate NTFS drives.</Description>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<IncludeSymbols>true</IncludeSymbols>
 	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<PackageReleaseNotes>
+		[0.12.2]
+		Added README file to the package.
+
 		[0.12.1]
 		Added LICENSE file to the package.
 	</PackageReleaseNotes>
@@ -27,6 +31,7 @@
     <PackageReference Include="OwlCore.Storage" Version="0.15.0" />
 
 	<None Include="../LICENSE" Pack="true" PackagePath="/"/>
+	<None Include="../README.md" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
 	<!-- PolySharp provides compiler-synthesized polyfill types (e.g. CollectionBuilderAttribute,
