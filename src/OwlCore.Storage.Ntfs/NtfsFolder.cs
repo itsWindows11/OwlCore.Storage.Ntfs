@@ -8,11 +8,25 @@ using System.Threading.Tasks;
 
 namespace OwlCore.Storage.Ntfs;
 
+/// <summary>
+/// Represents a folder in an NTFS volume.
+/// </summary>
+/// <remarks>
+/// Instances are bound to the <see cref="NtfsReader"/> passed to the constructor. If the reader is disposed
+/// and recreated, create a new <see cref="NtfsFolder"/> instance to observe the updated view.
+/// <para>
+/// <see cref="GetItemsAsync(StorableType, CancellationToken)"/> returns direct children only, excludes the
+/// current folder node, and honors <see cref="StorableType"/> filtering for files and folders.
+/// </para>
+/// </remarks>
 public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot, IGetItem, IGetItemRecursive, IGetFirstByName
 {
     /// <summary>
     /// The <see cref="NtfsReader"/> that this folder belongs to.
     /// </summary>
+    /// <remarks>
+    /// This reference is not updated automatically if callers replace or dispose the original reader instance.
+    /// </remarks>
     public NtfsReader Reader => reader;
 
     /// <summary>
