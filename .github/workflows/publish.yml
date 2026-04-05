@@ -2,7 +2,7 @@ name: NuGet Publish
 
 on:
   workflow_run:
-    workflows: ["Tests"]
+    workflows: ["Build Validation"]
     types: [completed]
     branches: [main]
   release:
