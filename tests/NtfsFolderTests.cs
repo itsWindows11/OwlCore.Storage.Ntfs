@@ -12,7 +12,7 @@ public class NtfsFolderTests : CommonIFolderTests
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
-        reader = await NtfsReader.CreateAsync(new DriveInfo("C:\\"), RetrieveMode.Minimal);
+        reader = await NtfsReader.CreateAsync(new DriveInfo("C:\\"), RetrieveMode.StandardInformations);
     }
 
     [ClassCleanup]
