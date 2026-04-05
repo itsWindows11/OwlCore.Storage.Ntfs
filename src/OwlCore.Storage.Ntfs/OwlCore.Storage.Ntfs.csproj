@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0</TargetFrameworks>
 	<LangVersion>12</LangVersion>
 	  
 	<AssemblyName>OwlCore.Storage.Ntfs</AssemblyName>
@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="itsWindows11.NtfsReader" Version="0.0.3" />
-    <PackageReference Include="OwlCore.Storage" Version="0.11.1" />
+    <PackageReference Include="OwlCore.Storage" Version="0.15.0" />
   </ItemGroup>
 
 </Project>
