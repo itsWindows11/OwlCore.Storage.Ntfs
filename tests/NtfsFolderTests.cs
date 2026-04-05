@@ -10,9 +10,9 @@ public class NtfsFolderTests : CommonIFolderTests
     private const string tempFolderName = "owlcorestoragentfstest";
 
     [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    public static async Task ClassInitialize(TestContext context)
     {
-        reader = new NtfsReader(new DriveInfo("C:\\"), RetrieveMode.Minimal);
+        reader = await NtfsReader.CreateAsync(new DriveInfo("C:\\"), RetrieveMode.Minimal);
     }
 
     [ClassCleanup]
