@@ -57,7 +57,7 @@ public class NtfsFolderTests : CommonIFolderTests
         reader?.Dispose();
         reader = new NtfsReader(new DriveInfo("C:\\"), RetrieveMode.Minimal);
 
-        return folder;
+        return new NtfsFolder(reader, folder.Id);
     }
 
     public override Task<IFolder?> CreateFolderWithCreatedAtAsync(DateTime createdAt) => Task.FromResult<IFolder?>(null);

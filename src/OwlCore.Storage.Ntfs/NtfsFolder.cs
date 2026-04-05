@@ -73,21 +73,35 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        var includeFolders = type.HasFlag(StorableType.Folder);
+        var includeFiles = type.HasFlag(StorableType.File);
+
         var nodes = await Task.Run(() => Reader.GetNodes(path), cancellationToken).ConfigureAwait(false);
-        foreach (var file in nodes)
+        foreach (var node in nodes)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (file.Attributes.HasFlag(Attributes.Directory) &&
-                (type.HasFlag(StorableType.Folder) || type.HasFlag(StorableType.All))
-            )
+            var normalizedNodePath = node.FullName.TrimEnd(
+                global::System.IO.Path.PathSeparator,
+                global::System.IO.Path.DirectorySeparatorChar,
+                global::System.IO.Path.AltDirectorySeparatorChar
+            );
+
+            if (string.Equals(normalizedNodePath, Path, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var isDirectory = node.Attributes.HasFlag(Attributes.Directory);
+
+            if (isDirectory)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return new NtfsFolder(reader, file.FullName);
+                if (includeFolders)
+                    yield return new NtfsFolder(reader, node.FullName);
+
+                continue;
             }
 
-            cancellationToken.ThrowIfCancellationRequested();
-            yield return new NtfsFile(reader, file);
+            if (includeFiles)
+                yield return new NtfsFile(reader, node);
         }
     }
 
