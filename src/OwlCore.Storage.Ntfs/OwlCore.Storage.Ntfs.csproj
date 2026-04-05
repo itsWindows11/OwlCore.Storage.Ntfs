@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-	<LangVersion>12</LangVersion>
+    <TargetFrameworks>netstandard2.0;net8.0;net9.0;net10.0</TargetFrameworks>
+	<LangVersion>14</LangVersion>
 	  
 	<AssemblyName>OwlCore.Storage.Ntfs</AssemblyName>
 	<RootNamespace>OwlCore.Storage.Ntfs</RootNamespace>
 	<PackageId>OwlCore.Storage.Ntfs</PackageId>
-	<Version>0.11.2</Version>
+	<Version>0.12.0</Version>
 	<Authors>itsWindows11</Authors>
 	<Company>itsWindows11</Company>
 	<Description>A OwlCore.Storage based library to enumerate NTFS drives.</Description>
@@ -20,8 +20,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="itsWindows11.NtfsReader" Version="0.0.3" />
-    <PackageReference Include="OwlCore.Storage" Version="0.11.1" />
+    <PackageReference Include="itsWindows11.NtfsReader" Version="0.1.0" />
+    <PackageReference Include="OwlCore.Storage" Version="0.15.0" />
   </ItemGroup>
+
+	<!-- PolySharp provides compiler-synthesized polyfill types (e.g. CollectionBuilderAttribute,
+	     IsExternalInit, CallerArgumentExpressionAttribute) that are absent from the netstandard2.0
+	     runtime but required when using C# 14 language features.  PrivateAssets=all keeps it out of
+	     the NuGet dependency graph so consumers don't receive it. -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="PolySharp" Version="1.15.0"
+		                  PrivateAssets="all"
+		                  IncludeAssets="runtime;build;native;contentfiles;analyzers" />
+	</ItemGroup>
 
 </Project>

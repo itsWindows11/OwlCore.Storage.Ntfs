@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Filesystem.Ntfs;
 using System.Runtime.CompilerServices;
@@ -7,23 +8,47 @@ using System.Threading.Tasks;
 
 namespace OwlCore.Storage.Ntfs;
 
+/// <summary>
+/// Represents a folder in an NTFS volume.
+/// </summary>
+/// <remarks>
+/// Instances are bound to the <see cref="NtfsReader"/> passed to the constructor. If the reader is disposed
+/// and recreated, create a new <see cref="NtfsFolder"/> instance to observe the updated view.
+/// <para>
+/// <see cref="GetItemsAsync(StorableType, CancellationToken)"/> returns direct children only, excludes the
+/// current folder node, and honors <see cref="StorableType"/> filtering for files and folders.
+/// </para>
+/// </remarks>
 public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot, IGetItem, IGetItemRecursive, IGetFirstByName
 {
     /// <summary>
     /// The <see cref="NtfsReader"/> that this folder belongs to.
     /// </summary>
+    /// <remarks>
+    /// This reference is not updated automatically if callers replace or dispose the original reader instance.
+    /// </remarks>
     public NtfsReader Reader => reader;
 
     /// <summary>
     /// The folder path.
     /// </summary>
-    public string Path { get; } = path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar);
+    public string Path { get; } = path.TrimEnd(
+        global::System.IO.Path.PathSeparator,
+        global::System.IO.Path.DirectorySeparatorChar,
+        global::System.IO.Path.AltDirectorySeparatorChar
+    );
 
     /// <inheritdoc/>
     public string Id => Path;
 
     /// <inheritdoc/>
-    public string Name { get; } = global::System.IO.Path.GetFileName(path.TrimEnd(global::System.IO.Path.PathSeparator, global::System.IO.Path.DirectorySeparatorChar, global::System.IO.Path.AltDirectorySeparatorChar));
+    public string Name { get; } = global::System.IO.Path.GetFileName(
+        path.TrimEnd(
+            global::System.IO.Path.PathSeparator,
+            global::System.IO.Path.DirectorySeparatorChar,
+            global::System.IO.Path.AltDirectorySeparatorChar
+        )
+    );
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
@@ -58,23 +83,39 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         cancellationToken.ThrowIfCancellationRequested();
 
         if (type == StorableType.None)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            yield break;
-        }
+            throw new ArgumentOutOfRangeException(nameof(type));
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        foreach (var file in await Task.Run(() => Reader.GetNodes(path), cancellationToken))
+        var includeFolders = type.HasFlag(StorableType.Folder);
+        var includeFiles = type.HasFlag(StorableType.File);
+
+        var nodes = await Task.Run(() => Reader.GetNodes(path), cancellationToken).ConfigureAwait(false);
+        foreach (var node in nodes)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (file.Attributes.HasFlag(Attributes.Directory) &&
-                (type.HasFlag(StorableType.Folder) || type.HasFlag(StorableType.All))
-            )
-                yield return new NtfsFolder(reader, file.FullName);
+            var normalizedNodePath = node.FullName.TrimEnd(
+                global::System.IO.Path.PathSeparator,
+                global::System.IO.Path.DirectorySeparatorChar,
+                global::System.IO.Path.AltDirectorySeparatorChar
+            );
 
-            yield return new NtfsFile(reader, file);
+            if (string.Equals(normalizedNodePath, Path, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var isDirectory = node.Attributes.HasFlag(Attributes.Directory);
+
+            if (isDirectory)
+            {
+                if (includeFolders)
+                    yield return new NtfsFolder(reader, node.FullName);
+
+                continue;
+            }
+
+            if (includeFiles)
+                yield return new NtfsFile(reader, node);
         }
     }
 

@@ -1,26 +1,67 @@
-name: Publish to NuGet
+name: NuGet Publish
 
 on:
-  push:
-    branches: [ release ]
-
-  # Allows you to run this workflow manually from the Actions tab
+  workflow_run:
+    workflows: ["Tests"]
+    types: [completed]
+    branches: [main]
+  release:
+    types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-publish:
+  publish:
+    name: Pack & Publish to NuGet
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: "8.0.x"
-        
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Publish to NuGet
-      run: dotnet nuget push "/home/runner/work/OwlCore.Storage.Ntfs/OwlCore.Storage.Ntfs/src/OwlCore.Storage.Ntfs/bin/Release/OwlCore.Storage.Ntfs.*.**.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
-      
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Setup .NET (all TFMs)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+
+      - name: Verify NUGET_API_KEY secret
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "::error::NUGET_API_KEY secret is not set. Add a valid NuGet.org API key under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Pack NuGet
+        run: dotnet pack src/OwlCore.Storage.Ntfs/OwlCore.Storage.Ntfs.csproj --no-build -c Release -o nupkgs
+
+      - name: Push to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push nupkgs/*.nupkg \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+          dotnet nuget push nupkgs/*.snupkg \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Publish skipped
+        run: echo "Skipping publish because version did not increase."

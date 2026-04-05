@@ -8,11 +8,21 @@ using System.Threading.Tasks;
 
 namespace OwlCore.Storage.Ntfs;
 
+/// <summary>
+/// Represents a file in an NTFS volume.
+/// </summary>
+/// <remarks>
+/// Instances are bound to the <see cref="NtfsReader"/> passed to the constructor. If the reader is disposed
+/// and recreated, create a new <see cref="NtfsFile"/> instance to observe the updated view.
+/// </remarks>
 public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 {
     /// <summary>
     /// The <see cref="NtfsReader"/> that this file belongs to.
     /// </summary>
+    /// <remarks>
+    /// This reference is not updated automatically if callers replace or dispose the original reader instance.
+    /// </remarks>
     public NtfsReader Reader => reader;
 
     public string Path => node.FullName;
