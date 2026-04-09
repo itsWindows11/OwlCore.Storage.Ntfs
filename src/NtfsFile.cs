@@ -45,26 +45,17 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 
     public DateTime LastAccessTime => node.LastAccessTime;
 
-    /// <summary>
-    /// Gets the creation timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
-    /// </summary>
+    /// <inheritdoc />
     public ICreatedAtProperty? CreatedAt => node.CreationTime != DateTime.MinValue
         ? _createdAt ??= new NtfsCreatedAtProperty(this, node)
         : null;
 
-    /// <summary>
-    /// Gets the last-accessed timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
-    /// </summary>
+    /// <inheritdoc />
     public ILastAccessedAtProperty? LastAccessedAt => node.LastAccessTime != DateTime.MinValue
         ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, node)
         : null;
 
-    /// <summary>
-    /// Gets the last-modified timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
-    /// </summary>
+    /// <inheritdoc />
     public ILastModifiedAtProperty? LastModifiedAt => node.LastChangeTime != DateTime.MinValue
         ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, node)
         : null;
