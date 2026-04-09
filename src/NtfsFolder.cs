@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace OwlCore.Storage.Ntfs;
 
 /// <summary>
@@ -21,6 +23,21 @@ namespace OwlCore.Storage.Ntfs;
 /// </remarks>
 public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot, IGetItem, IGetItemRecursive, IGetFirstByName
 {
+    private INode? _node;
+    private ICreatedAtProperty? _createdAt;
+    private ILastAccessedAtProperty? _lastAccessedAt;
+    private ILastModifiedAtProperty? _lastModifiedAt;
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="NtfsFolder"/> from a known <see cref="INode"/>.
+    /// </summary>
+    /// <param name="reader">The <see cref="NtfsReader"/> that owns the node.</param>
+    /// <param name="node">The NTFS directory node.</param>
+    public NtfsFolder(NtfsReader reader, INode node) : this(reader, node.FullName ?? throw new ArgumentNullException(nameof(node), "INode.FullName must not be null."))
+    {
+        _node = node;
+    }
+
     /// <summary>
     /// The <see cref="NtfsReader"/> that this folder belongs to.
     /// </summary>
@@ -49,6 +66,21 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
             global::System.IO.Path.AltDirectorySeparatorChar
         )
     );
+
+    /// <inheritdoc />
+    public ICreatedAtProperty? CreatedAt => _node is not null && _node.CreationTime != DateTime.MinValue
+        ? _createdAt ??= new NtfsCreatedAtProperty(this, _node)
+        : null;
+
+    /// <inheritdoc />
+    public ILastAccessedAtProperty? LastAccessedAt => _node is not null && _node.LastAccessTime != DateTime.MinValue
+        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, _node)
+        : null;
+
+    /// <inheritdoc />
+    public ILastModifiedAtProperty? LastModifiedAt => _node is not null && _node.LastChangeTime != DateTime.MinValue
+        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, _node)
+        : null;
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
@@ -109,7 +141,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
             if (isDirectory)
             {
                 if (includeFolders)
-                    yield return new NtfsFolder(reader, node.FullName);
+                    yield return new NtfsFolder(reader, node);
 
                 continue;
             }
