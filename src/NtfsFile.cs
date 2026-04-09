@@ -17,6 +17,10 @@ namespace OwlCore.Storage.Ntfs;
 /// </remarks>
 public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 {
+    private ICreatedAtProperty? _createdAt;
+    private ILastAccessedAtProperty? _lastAccessedAt;
+    private ILastModifiedAtProperty? _lastModifiedAt;
+
     /// <summary>
     /// The <see cref="NtfsReader"/> that this file belongs to.
     /// </summary>
@@ -40,6 +44,30 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
     public DateTime LastChangeTime => node.LastChangeTime;
 
     public DateTime LastAccessTime => node.LastAccessTime;
+
+    /// <summary>
+    /// Gets the creation timestamp property, or <c>null</c> if the reader was not initialized with
+    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
+    /// </summary>
+    public ICreatedAtProperty? CreatedAt => node.CreationTime != DateTime.MinValue
+        ? _createdAt ??= new NtfsCreatedAtProperty(this, node)
+        : null;
+
+    /// <summary>
+    /// Gets the last-accessed timestamp property, or <c>null</c> if the reader was not initialized with
+    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
+    /// </summary>
+    public ILastAccessedAtProperty? LastAccessedAt => node.LastAccessTime != DateTime.MinValue
+        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, node)
+        : null;
+
+    /// <summary>
+    /// Gets the last-modified timestamp property, or <c>null</c> if the reader was not initialized with
+    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp).
+    /// </summary>
+    public ILastModifiedAtProperty? LastModifiedAt => node.LastChangeTime != DateTime.MinValue
+        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, node)
+        : null;
 
     /// <inheritdoc/>
     public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
