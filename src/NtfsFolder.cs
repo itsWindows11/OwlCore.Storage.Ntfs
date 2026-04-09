@@ -33,7 +33,7 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     /// </summary>
     /// <param name="reader">The <see cref="NtfsReader"/> that owns the node.</param>
     /// <param name="node">The NTFS directory node.</param>
-    public NtfsFolder(NtfsReader reader, INode node) : this(reader, node.FullName)
+    public NtfsFolder(NtfsReader reader, INode node) : this(reader, node.FullName ?? throw new ArgumentNullException(nameof(node), "INode.FullName must not be null."))
     {
         _node = node;
     }
