@@ -67,29 +67,17 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
         )
     );
 
-    /// <summary>
-    /// Gets the creation timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp), or if this
-    /// instance was not created from an <see cref="INode"/> (e.g. constructed by path only).
-    /// </summary>
+    /// <inheritdoc />
     public ICreatedAtProperty? CreatedAt => _node is not null && _node.CreationTime != DateTime.MinValue
         ? _createdAt ??= new NtfsCreatedAtProperty(this, _node)
         : null;
 
-    /// <summary>
-    /// Gets the last-accessed timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp), or if this
-    /// instance was not created from an <see cref="INode"/> (e.g. constructed by path only).
-    /// </summary>
+    /// <inheritdoc />
     public ILastAccessedAtProperty? LastAccessedAt => _node is not null && _node.LastAccessTime != DateTime.MinValue
         ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, _node)
         : null;
 
-    /// <summary>
-    /// Gets the last-modified timestamp property, or <c>null</c> if the reader was not initialized with
-    /// <see cref="RetrieveMode.StandardInformations"/> (indicated by an unset timestamp), or if this
-    /// instance was not created from an <see cref="INode"/> (e.g. constructed by path only).
-    /// </summary>
+    /// <inheritdoc />
     public ILastModifiedAtProperty? LastModifiedAt => _node is not null && _node.LastChangeTime != DateTime.MinValue
         ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, _node)
         : null;
