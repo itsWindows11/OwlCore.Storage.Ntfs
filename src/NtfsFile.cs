@@ -17,6 +17,10 @@ namespace OwlCore.Storage.Ntfs;
 /// </remarks>
 public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 {
+    private ICreatedAtProperty? _createdAt;
+    private ILastAccessedAtProperty? _lastAccessedAt;
+    private ILastModifiedAtProperty? _lastModifiedAt;
+
     /// <summary>
     /// The <see cref="NtfsReader"/> that this file belongs to.
     /// </summary>
@@ -41,9 +45,30 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 
     public DateTime LastAccessTime => node.LastAccessTime;
 
+    /// <inheritdoc />
+    public ICreatedAtProperty? CreatedAt => node.CreationTime != DateTime.MinValue
+        ? _createdAt ??= new NtfsCreatedAtProperty(this, () => node.CreationTime)
+        : null;
+
+    /// <inheritdoc />
+    public ILastAccessedAtProperty? LastAccessedAt => node.LastAccessTime != DateTime.MinValue
+        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, () => node.LastAccessTime)
+        : null;
+
+    /// <inheritdoc />
+    public ILastModifiedAtProperty? LastModifiedAt => node.LastChangeTime != DateTime.MinValue
+        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, () => node.LastChangeTime)
+        : null;
+
     /// <inheritdoc/>
-    public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-        => Task.FromResult<IFolder?>(new NtfsFolder(reader, global::System.IO.Path.GetDirectoryName(Id)));
+    public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default) 
+    {
+        var parentPath = global::System.IO.Path.GetDirectoryName(Id);
+        if (parentPath == null)
+            return Task.FromResult<IFolder?>(null);
+
+        return Task.FromResult<IFolder?>(new NtfsFolder(reader, parentPath));
+    }
 
     /// <inheritdoc/>
     public Task<IFolder?> GetRootAsync(CancellationToken cancellationToken = default)
