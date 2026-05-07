@@ -1,16 +1,15 @@
 using System;
-using System.IO.Filesystem.Ntfs;
 
 #nullable enable
 
 namespace OwlCore.Storage.Ntfs;
 
 /// <summary>
-/// Last-modified timestamp property for NTFS storage items backed by <see cref="INode"/>.
+/// Last-modified timestamp property for NTFS storage items.
 /// </summary>
-internal sealed class NtfsLastModifiedAtProperty(IStorable owner, INode node)
+internal sealed class NtfsLastModifiedAtProperty(IStorable owner, Func<DateTime?> getValue)
     : SimpleStorageProperty<DateTime?>(
         id: owner.Id + "/" + nameof(ILastModifiedAt.LastModifiedAt),
         name: nameof(ILastModifiedAt.LastModifiedAt),
-        getter: () => node.LastChangeTime == DateTime.MinValue ? null : node.LastChangeTime
+        getter: getValue
     ), ILastModifiedAtProperty;

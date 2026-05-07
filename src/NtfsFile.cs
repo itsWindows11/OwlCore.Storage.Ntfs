@@ -47,17 +47,17 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
 
     /// <inheritdoc />
     public ICreatedAtProperty? CreatedAt => node.CreationTime != DateTime.MinValue
-        ? _createdAt ??= new NtfsCreatedAtProperty(this, node)
+        ? _createdAt ??= new NtfsCreatedAtProperty(this, () => node.CreationTime)
         : null;
 
     /// <inheritdoc />
     public ILastAccessedAtProperty? LastAccessedAt => node.LastAccessTime != DateTime.MinValue
-        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, node)
+        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, () => node.LastAccessTime)
         : null;
 
     /// <inheritdoc />
     public ILastModifiedAtProperty? LastModifiedAt => node.LastChangeTime != DateTime.MinValue
-        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, node)
+        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, () => node.LastChangeTime)
         : null;
 
     /// <inheritdoc/>

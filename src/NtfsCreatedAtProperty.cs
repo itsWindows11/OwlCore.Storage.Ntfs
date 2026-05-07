@@ -1,16 +1,15 @@
 using System;
-using System.IO.Filesystem.Ntfs;
 
 #nullable enable
 
 namespace OwlCore.Storage.Ntfs;
 
 /// <summary>
-/// Creation timestamp property for NTFS storage items backed by <see cref="INode"/>.
+/// Creation timestamp property for NTFS storage items.
 /// </summary>
-internal sealed class NtfsCreatedAtProperty(IStorable owner, INode node)
+internal sealed class NtfsCreatedAtProperty(IStorable owner, Func<DateTime?> getValue)
     : SimpleStorageProperty<DateTime?>(
         id: owner.Id + "/" + nameof(ICreatedAt.CreatedAt),
         name: nameof(ICreatedAt.CreatedAt),
-        getter: () => node.CreationTime == DateTime.MinValue ? null : node.CreationTime
+        getter: getValue
     ), ICreatedAtProperty;

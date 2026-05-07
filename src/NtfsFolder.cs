@@ -33,8 +33,13 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     /// </summary>
     /// <param name="reader">The <see cref="NtfsReader"/> that owns the node.</param>
     /// <param name="node">The NTFS directory node.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="node"/>'s <see cref="INode.FullName"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="node"/> does not represent a directory.</exception>
     public NtfsFolder(NtfsReader reader, INode node) : this(reader, node.FullName ?? throw new ArgumentNullException(nameof(node), "INode.FullName must not be null."))
     {
+        if (!node.Attributes.HasFlag(Attributes.Directory))
+            throw new ArgumentException("The node must represent a directory.", nameof(node));
+
         _node = node;
     }
 
@@ -68,19 +73,58 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     );
 
     /// <inheritdoc />
-    public ICreatedAtProperty? CreatedAt => _node is not null && _node.CreationTime != DateTime.MinValue
-        ? _createdAt ??= new NtfsCreatedAtProperty(this, _node)
-        : null;
+    public ICreatedAtProperty? CreatedAt
+    {
+        get
+        {
+            if (_node is not null)
+                return _node.CreationTime != DateTime.MinValue
+                    ? _createdAt ??= new NtfsCreatedAtProperty(this, () => _node.CreationTime)
+                    : null;
+
+            return _createdAt ??= new NtfsCreatedAtProperty(this, () =>
+            {
+                var t = new DirectoryInfo(Path).CreationTime;
+                return t == DateTime.MinValue ? null : t;
+            });
+        }
+    }
 
     /// <inheritdoc />
-    public ILastAccessedAtProperty? LastAccessedAt => _node is not null && _node.LastAccessTime != DateTime.MinValue
-        ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, _node)
-        : null;
+    public ILastAccessedAtProperty? LastAccessedAt
+    {
+        get
+        {
+            if (_node is not null)
+                return _node.LastAccessTime != DateTime.MinValue
+                    ? _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, () => _node.LastAccessTime)
+                    : null;
+
+            return _lastAccessedAt ??= new NtfsLastAccessedAtProperty(this, () =>
+            {
+                var t = new DirectoryInfo(Path).LastAccessTime;
+                return t == DateTime.MinValue ? null : t;
+            });
+        }
+    }
 
     /// <inheritdoc />
-    public ILastModifiedAtProperty? LastModifiedAt => _node is not null && _node.LastChangeTime != DateTime.MinValue
-        ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, _node)
-        : null;
+    public ILastModifiedAtProperty? LastModifiedAt
+    {
+        get
+        {
+            if (_node is not null)
+                return _node.LastChangeTime != DateTime.MinValue
+                    ? _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, () => _node.LastChangeTime)
+                    : null;
+
+            return _lastModifiedAt ??= new NtfsLastModifiedAtProperty(this, () =>
+            {
+                var t = new DirectoryInfo(Path).LastWriteTime;
+                return t == DateTime.MinValue ? null : t;
+            });
+        }
+    }
 
     /// <inheritdoc/>
     public Task<IStorableChild> GetFirstByNameAsync(string name, CancellationToken cancellationToken = default)
