@@ -23,7 +23,7 @@ namespace OwlCore.Storage.Ntfs;
 /// </remarks>
 public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot, IGetItem, IGetItemRecursive, IGetFirstByName
 {
-    private INode? _node;
+    private readonly INode? _node;
     private ICreatedAtProperty? _createdAt;
     private ILastAccessedAtProperty? _lastAccessedAt;
     private ILastModifiedAtProperty? _lastModifiedAt;
@@ -196,15 +196,19 @@ public class NtfsFolder(NtfsReader reader, string path) : IChildFolder, IGetRoot
     }
 
     /// <inheritdoc/>
-    public Task<IFolder> GetParentAsync(CancellationToken cancellationToken = default)
+    public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult<IFolder>(new NtfsFolder(reader, global::System.IO.Path.GetDirectoryName(Path)));
+        var parentPath = global::System.IO.Path.GetDirectoryName(Path);
+        if (parentPath == null)
+            return Task.FromResult<IFolder?>(null);
+
+        return Task.FromResult<IFolder?>(new NtfsFolder(reader, parentPath));
     }
 
     /// <inheritdoc/>
-    public Task<IFolder> GetRootAsync(CancellationToken cancellationToken = default)
+    public Task<IFolder?> GetRootAsync(CancellationToken cancellationToken = default)
     {
         DirectoryInfo root = new DirectoryInfo(Id).Root;
-        return Task.FromResult<IFolder>(new NtfsFolder(reader, root.FullName));
+        return Task.FromResult<IFolder?>(new NtfsFolder(reader, root.FullName));
     }
 }

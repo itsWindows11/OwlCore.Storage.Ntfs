@@ -61,8 +61,14 @@ public class NtfsFile(NtfsReader reader, INode node) : IChildFile, IGetRoot
         : null;
 
     /// <inheritdoc/>
-    public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default)
-        => Task.FromResult<IFolder?>(new NtfsFolder(reader, global::System.IO.Path.GetDirectoryName(Id)));
+    public Task<IFolder?> GetParentAsync(CancellationToken cancellationToken = default) 
+    {
+        var parentPath = global::System.IO.Path.GetDirectoryName(Id);
+        if (parentPath == null)
+            return Task.FromResult<IFolder?>(null);
+
+        return Task.FromResult<IFolder?>(new NtfsFolder(reader, parentPath));
+    }
 
     /// <inheritdoc/>
     public Task<IFolder?> GetRootAsync(CancellationToken cancellationToken = default)
